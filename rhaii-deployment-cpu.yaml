@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rhaii-cpu
+  labels:
+    app.kubernetes.io/name: rhaii-cpu
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: rhaii-cpu
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: rhaii-cpu
+    spec:
+      imagePullSecrets:
+        - name: redhat-registry-pull
+      volumes:
+        - name: rhaii-cache
+          persistentVolumeClaim:
+            claimName: rhaii-cache
+        - name: shm
+          emptyDir:
+            medium: Memory
+            sizeLimit: 4Gi
+      containers:
+        - name: rhaii-cpu
+          image: registry.redhat.io/rhaii/vllm-cpu-rhel9:3.5.0-1786546771
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8000
+              protocol: TCP
+          env:
+            - name: HUGGING_FACE_HUB_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: hf-secret
+                  key: HF_TOKEN
+            - name: HF_HUB_OFFLINE
+              value: "0"
+            - name: VLLM_CPU_KVCACHE_SPACE
+              value: "8"
+          args:
+            - --model
+            - Qwen/Qwen2.5-1.5B-Instruct
+            - --host
+            - "0.0.0.0"
+            - --port
+            - "8000"
+          volumeMounts:
+            - name: rhaii-cache
+              mountPath: /opt/app-root/src/.cache
+            - name: shm
+              mountPath: /dev/shm
+          startupProbe:
+            httpGet:
+              path: /v1/models
+              port: http
+            periodSeconds: 15
+            failureThreshold: 40
+          resources:
+            requests:
+              cpu: "4"
+              memory: 8Gi
+            limits:
+              cpu: "8"
+              memory: 16Gi
