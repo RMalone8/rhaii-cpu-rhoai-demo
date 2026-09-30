@@ -1,8 +1,8 @@
 apiVersion: infrastructure.opendatahub.io/v1
 kind: HardwareProfile
 metadata:
-  name: rhaii-cpu-profile
-  namespace: rhaii-cpu
+  name: ai-inference-cpu-profile
+  namespace: ai-inference-cpu-demo
 spec:
   identifiers:
     - identifier: cpu

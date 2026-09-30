@@ -2,7 +2,7 @@ apiVersion: serving.kserve.io/v1beta1
 kind: InferenceService
 metadata:
   name: qwen25-instruct
-  namespace: rmalone
+  namespace: ai-inference-cpu-demo
   annotations:
     openshift.io/display-name: "Qwen 2.5 1.5B Instruct (CPU)"
 spec:
@@ -13,7 +13,7 @@ spec:
       modelFormat:
         name: vLLM
       runtime: vllm-cpu-x86-runtime
-      storageUri: "hf://Qwen/Qwen2.5-1.5B-Instruct"
+      storageUri: "pvc://ai-inference-cache/Qwen2.5-1.5B-Instruct"
       resources:
         requests:
           cpu: "4"
