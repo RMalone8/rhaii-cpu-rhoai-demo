@@ -51,6 +51,8 @@ spec:
                   staging.rename(model)
                   print(f"Model available at {model}")
           env:
+            - name: HF_HUB_OFFLINE
+              value: "0"
             - name: HF_TOKEN
               valueFrom:
                 secretKeyRef:
