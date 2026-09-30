@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: ai-inference-cpu-model-download
+  name: model-download-job
   namespace: ai-inference-cpu-demo
 spec:
   backoffLimit: 3
@@ -19,37 +19,11 @@ spec:
           image: registry.redhat.io/rhaii/vllm-cpu-rhel9:3.5.0-1786546771
           imagePullPolicy: IfNotPresent
           command:
-            - python3
+            - /bin/sh
             - -c
-          args:
             - |
-              import os
-              import shutil
-              from pathlib import Path
-
-              from huggingface_hub import snapshot_download
-
-              os.umask(0o022)
-              model = Path("/models/Qwen2.5-1.5B-Instruct")
-              staging = Path("/models/.Qwen2.5-1.5B-Instruct.download")
-              if (model / ".download-complete").is_file():
-                  print(f"Model already available at {model}")
-              else:
-                  if model.exists():
-                      raise SystemExit(f"{model} exists without a completion marker")
-                  staging.mkdir(exist_ok=True)
-                  snapshot_download(
-                      repo_id="Qwen/Qwen2.5-1.5B-Instruct",
-                      local_dir=str(staging),
-                  )
-                  shutil.rmtree(staging / ".cache", ignore_errors=True)
-                  for path in staging.rglob("*"):
-                      path.chmod(0o755 if path.is_dir() else 0o644)
-                  (staging / ".download-complete").write_text(
-                      "Qwen/Qwen2.5-1.5B-Instruct\n"
-                  )
-                  staging.rename(model)
-                  print(f"Model available at {model}")
+              umask 022
+              hf download Qwen/Qwen2.5-1.5B-Instruct --local-dir /models/Qwen2.5-1.5B-Instruct
           env:
             - name: HF_HUB_OFFLINE
               value: "0"
