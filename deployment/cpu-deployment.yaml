@@ -20,9 +20,9 @@ spec:
       imagePullSecrets:
         - name: redhat-registry-pull
       volumes:
-        - name: ai-inference-cache
+        - name: model-cache
           persistentVolumeClaim:
-            claimName: ai-inference-cache
+            claimName: model-cache
         - name: shm
           emptyDir:
             medium: Memory
@@ -46,7 +46,7 @@ spec:
             - --port
             - "8080"
           volumeMounts:
-            - name: ai-inference-cache
+            - name: model-cache
               mountPath: /models
               readOnly: true
             - name: shm

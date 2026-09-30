@@ -13,7 +13,7 @@ spec:
       modelFormat:
         name: vLLM
       runtime: vllm-cpu-x86-runtime
-      storageUri: "pvc://ai-inference-cache/Qwen2.5-1.5B-Instruct"
+      storageUri: "pvc://model-cache/Qwen2.5-1.5B-Instruct"
       env:
         - name: VLLM_CPU_KVCACHE_SPACE
           value: "8"

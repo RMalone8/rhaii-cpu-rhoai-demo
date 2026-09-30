@@ -11,9 +11,9 @@ spec:
       imagePullSecrets:
         - name: redhat-registry-pull
       volumes:
-        - name: ai-inference-cache
+        - name: model-cache
           persistentVolumeClaim:
-            claimName: ai-inference-cache
+            claimName: model-cache
       containers:
         - name: model-download
           image: registry.redhat.io/rhaii/vllm-cpu-rhel9:3.5.0-1786546771
@@ -60,7 +60,7 @@ spec:
                   key: HF_TOKEN
                   optional: true
           volumeMounts:
-            - name: ai-inference-cache
+            - name: model-cache
               mountPath: /models
           resources:
             requests:

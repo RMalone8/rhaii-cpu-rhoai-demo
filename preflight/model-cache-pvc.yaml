@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: ai-inference-cache
+  name: model-cache
   namespace: ai-inference-cpu-demo
 spec:
   accessModes:
